@@ -113,28 +113,35 @@ $.extend({
 
             var
                 type = $.isNumeric( sub ),
-                size = ( type ? $(document.body) : sub ).css('font-size').match(/^\d+/),
+                size = Number( $( type ? document.body : sub ).css('font-size').match(/^\d+/) ),
                 mag = mag || 1,
                 length = type ? sub : sub.text().length;
 
             return length * size * mag;
         },
 
+        // 销毁
+        it.destroy = function( sub ){
+            return sub.remove();
+        },
+
         // 运行
         it.run = function( sub ){
-            !function( i ){
+            !function( i, text ){
                 i
-                .text( sub.text )
+                .text( text )
                 .css({
-                    top: it.random( 0, options.height - it.long( 1 ) ),
+                    top: it.random( 0, options.height - it.long( text.length ) ),
                     left: options.start
                 })
                 // Maybe: transform: translate3d(0, 0, 0);
                 .animate({
-                    left: -it.long( i, 1.1 ) // 1.1 for Italic
-                }, options.speed)
+                    left: -it.long( text.length )
+                }, options.speed, function(){
+                    it.destroy( i );
+                })
                 .appendTo( options.board );
-            }( $('<i>') );
+            }( $('<i>'), sub.text );
         },
 
         // 初始化
